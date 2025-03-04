@@ -14,7 +14,7 @@ y = data.iloc[:, -1].values   # Target (wine quality score)
 
 # Convert target to classification (quality 3-9 -> categories)
 # One-hot encode target variable
-hot_encoder = OneHotEncoder(sparse=False) # Create the one-hot encoder instance for transforming target
+hot_encoder = OneHotEncoder(sparse_output=False) # Create the one-hot encoder instance for transforming target
 y = hot_encoder.fit_transform(y.reshape(-1, 1)) # Perform transformation
 
 # Split into train and test sets
@@ -26,9 +26,9 @@ X_train = sscaler.fit_transform(X_train) # Fit the scaler on the training data a
 X_test = sscaler.transform(X_test) # Transform the test data
 
 # Define network architecture
-input_size = 'Figure out based on preprocessing' # Number of features
+input_size = X_train.shape[1] # Number of features
 hidden_size = 16  # Hidden layer neurons
-output_size = 'Figure out based on preprocessing' # Number of classes
+output_size = y_train.shape[1]    # Number of classes
 
 # Initialize weights and biases
 np.random.seed(42)
