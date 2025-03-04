@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.metrics import accuracy_score
@@ -34,7 +35,7 @@ hidden_size2 = 16  # Hidden layer neurons
 output_size = y_train.shape[1]    # Number of classes
 
 #Make this all a function
-def Network(epochs=10000, lr=0.05, printing=False):
+def Network(epochs=10000, lr=0.05, printing=False, alpha=0.01):
     # Initialize weights and biases
     #I used small random values for weights for best behavior
     np.random.seed(42)
@@ -49,6 +50,10 @@ def Network(epochs=10000, lr=0.05, printing=False):
     def relu(Z):
         """Docstring WIP"""
         return np.maximum(0, Z)
+
+    def leaky_relu(Z, alpha=0.01):
+        """Docstring WIP"""
+        return np.where(Z > 0, Z, Z*alpha)
 
     def selu(Z):
         """Docstring WIP"""
@@ -98,12 +103,13 @@ def Network(epochs=10000, lr=0.05, printing=False):
         db2 = np.sum(dZ2, axis=0, keepdims=True)/m # Hidden 2 Bias Gradient
         # Hidden Layer 1
         dA1 = np.dot(dZ2, W2.T) # Post-Activation Gradient
+        #dZ1 = dA1*np.where(Z1 > 0, 1, alpha) #Leaky RELU Derivative
         dZ1 = dA1*(Z1 > 0) #! Selu Derivative (Approximation)
         dW1 = np.dot(X.T, dZ1)/m # Hidden 1 Weight Gradient
         db1 = np.sum(dZ1, axis=0, keepdims=True)/m # Hidden 1 Bias Gradient
         return dW1, db1, dW2, db2, dW3, db3
 
-
+    loss_data = []
     # Training loop
     for epoch in range(epochs):
         # Perform forward propagation
@@ -111,6 +117,7 @@ def Network(epochs=10000, lr=0.05, printing=False):
 
         # Compute loss
         loss = compute_loss(y_train, A3)
+        loss_data.append(loss)
 
         # Perform backward propagation
         dW1, db1, dW2, db2, dW3, db3 = backward_propagation(X_train, y_train, Z1, A1, Z2, A2, Z3, A3)
@@ -122,7 +129,7 @@ def Network(epochs=10000, lr=0.05, printing=False):
         b2 -= lr * db2 # Hidden 2 Biases
         W3 -= lr * dW3 # Output Weights
         b3 -= lr * db3 # Output Biases
-
+        
         # Print loss every 1000 epochs
         if epoch % 1000 == 0:
             if printing:
@@ -136,11 +143,22 @@ def Network(epochs=10000, lr=0.05, printing=False):
     accuracy = accuracy_score(y_true, y_pred)
     if printing:
         print(f"Test Accuracy: {accuracy:.4f}")
-    return accuracy
+    return accuracy, loss_data
 
 #Testing
 lr=0.09
-print(f"lr={lr:.2f}; Test Accuracy = {Network(epochs=10000, lr=lr):.4f}")
+accuracy, loss_data = Network(epochs=10000, lr=lr, printing=True)
+print(f"lr={lr:.2f}; Test Accuracy = {accuracy:.4f}")
+
+#Plotting
+fig = plt.figure(figsize=(10, 6))
+plt.plot(np.arange(0,10000,1), loss_data, '-r', label='Loss')
+plt.title("Loss vs Epochs")
+plt.xlabel("Epochs")
+plt.ylabel("Loss")
+plt.legend(loc='upper right')
+plt.grid()
+plt.show()
 
 #TODO############################################################################################################
 #TODO Implement a scheduler?
@@ -181,3 +199,4 @@ print(f"lr={lr:.2f}; Test Accuracy = {Network(epochs=10000, lr=lr):.4f}")
 #v13: lr=0.05, epochs=20000, hidden_size1=32, hidden_size2=16, Test Accuracy = 0.6188
 #v14: lr=0.09, epochs=20000, hidden_size1=32, hidden_size2=16, Test Accuracy = 0.6188
 #!v15: lr=0.09, epochs=10000, hidden_size1=32, hidden_size2=16, Test Accuracy = 0.6219
+#v16: lr=0.09, epochs=10000, hidden_size1=32, hidden_size2=16, Test Accuracy = 0.6062, swapped selu for leaky relu
