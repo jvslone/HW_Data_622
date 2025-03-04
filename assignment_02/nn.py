@@ -200,3 +200,5 @@ plt.show()
 #v14: lr=0.09, epochs=20000, hidden_size1=32, hidden_size2=16, Test Accuracy = 0.6188
 #!v15: lr=0.09, epochs=10000, hidden_size1=32, hidden_size2=16, Test Accuracy = 0.6219
 #v16: lr=0.09, epochs=10000, hidden_size1=32, hidden_size2=16, Test Accuracy = 0.6062, swapped selu for leaky relu
+
+#I ran the network for 1000 epoch previously, just tuning it now.
