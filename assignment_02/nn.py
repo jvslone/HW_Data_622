@@ -123,12 +123,12 @@ def Network(epochs=10000, lr=0.05, printing=False, alpha=0.01):
         dW1, db1, dW2, db2, dW3, db3 = backward_propagation(X_train, y_train, Z1, A1, Z2, A2, Z3, A3)
 
         # Update weights and biases
-        W1 -= lr * dW1 # Hidden 1 Weights
-        b1 -= lr * db1 # Hidden 1 Biases
-        W2 -= lr * dW2 # Hidden 2 Weights
-        b2 -= lr * db2 # Hidden 2 Biases
-        W3 -= lr * dW3 # Output Weights
-        b3 -= lr * db3 # Output Biases
+        W1 -= lr*dW1 # Hidden 1 Weights
+        b1 -= lr*db1 # Hidden 1 Biases
+        W2 -= lr*dW2 # Hidden 2 Weights
+        b2 -= lr*db2 # Hidden 2 Biases
+        W3 -= lr*dW3 # Output Weights
+        b3 -= lr*db3 # Output Biases
         
         # Print loss every 1000 epochs
         if epoch % 1000 == 0:
